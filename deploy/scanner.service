@@ -1,0 +1,21 @@
+# /etc/systemd/system/scanner.service
+# Runs the app under Gunicorn, managed by systemd, on an EC2 instance.
+#
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now scanner
+#   sudo systemctl status scanner
+[Unit]
+Description=CloudGuard File Scanner (Gunicorn)
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/opt/scanner
+EnvironmentFile=/opt/scanner/.env
+ExecStart=/opt/scanner/venv/bin/gunicorn -c /opt/scanner/deploy/gunicorn.conf.py run:app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

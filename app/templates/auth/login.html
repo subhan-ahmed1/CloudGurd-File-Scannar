@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Sign in &middot; {{ app_name }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="card border-secondary-subtle">
+      <div class="card-body p-4">
+        <h4 class="mb-3"><i class="bi bi-box-arrow-in-right text-info"></i> Sign in</h4>
+        <form method="post" novalidate>
+          {{ form.hidden_tag() }}
+          <div class="mb-3">
+            {{ form.username.label(class="form-label") }}
+            {{ form.username(class="form-control", autofocus=true) }}
+            {% for e in form.username.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="mb-3">
+            {{ form.password.label(class="form-label") }}
+            {{ form.password(class="form-control") }}
+            {% for e in form.password.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="form-check mb-3">
+            {{ form.remember(class="form-check-input") }}
+            {{ form.remember.label(class="form-check-label") }}
+          </div>
+          {{ form.submit(class="btn btn-info w-100") }}
+        </form>
+        <p class="text-center text-secondary small mt-3 mb-0">
+          No account? <a href="{{ url_for('auth.register') }}">Create one</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

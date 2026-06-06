@@ -1,0 +1,51 @@
+# Local development stack: Flask app + PostgreSQL + ClamAV.
+# Run:  docker compose up --build
+# App:  http://localhost:5000
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_CONFIG: production
+      SECRET_KEY: dev-secret-change-me
+      DATABASE_URL: postgresql+psycopg2://scanner:scanner@db:5432/scanner
+      ENABLE_CLAMAV: "true"
+      CLAMAV_HOST: clamav
+      CLAMAV_PORT: "3310"
+      ENABLE_VIRUSTOTAL: "${ENABLE_VIRUSTOTAL:-false}"
+      VIRUSTOTAL_API_KEY: "${VIRUSTOTAL_API_KEY:-}"
+    depends_on:
+      db:
+        condition: service_healthy
+      clamav:
+        condition: service_healthy
+    command: >
+      sh -c "flask --app run init-db &&
+             gunicorn --bind 0.0.0.0:5000 --workers 3 --threads 2 --timeout 180 run:app"
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: scanner
+      POSTGRES_PASSWORD: scanner
+      POSTGRES_DB: scanner
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scanner"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  clamav:
+    image: clamav/clamav:stable
+    healthcheck:
+      test: ["CMD-SHELL", "echo PING | nc -w 5 localhost 3310 | grep -q PONG"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 120s   # initial virus DB download takes a while
+
+volumes:
+  pgdata:

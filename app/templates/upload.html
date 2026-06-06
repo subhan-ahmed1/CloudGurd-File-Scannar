@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Upload &middot; {{ app_name }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <h3 class="mb-3">Upload &amp; scan a file</h3>
+    <form method="post" enctype="multipart/form-data" id="uploadForm">
+      <label for="fileInput" class="dropzone d-block text-center p-5 rounded border border-secondary-subtle border-2 border-dashed" id="dropzone">
+        <i class="bi bi-cloud-arrow-up display-4 text-info"></i>
+        <p class="mb-1 mt-2">Drag &amp; drop a file here, or click to browse</p>
+        <p class="small text-secondary mb-0" id="fileLabel">No file selected</p>
+        <input type="file" name="file" id="fileInput" class="d-none" required>
+      </label>
+      <button type="submit" class="btn btn-info w-100 mt-3" id="submitBtn" disabled>
+        <span class="spinner-border spinner-border-sm d-none" id="spinner"></span>
+        <span id="btnText"><i class="bi bi-shield-check"></i> Scan file</span>
+      </button>
+    </form>
+    <div class="alert alert-info small mt-3">
+      <i class="bi bi-info-circle"></i> The file is hashed, type-validated, and
+      checked against {{ 'VirusTotal' if engines.virustotal else '' }}{% if engines.virustotal and engines.clamav %} and {% endif %}{{ 'ClamAV' if engines.clamav else '' }}{% if not engines.virustotal and not engines.clamav %}the built-in static analyzer{% endif %}.
+      A safe test file to try is the <a href="https://www.eicar.org/download-anti-malware-testfile/" target="_blank" rel="noopener">EICAR test file</a> &mdash; it is harmless but every AV engine flags it.
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

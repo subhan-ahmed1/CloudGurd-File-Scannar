@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Register &middot; {{ app_name }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="card border-secondary-subtle">
+      <div class="card-body p-4">
+        <h4 class="mb-3"><i class="bi bi-person-plus text-info"></i> Create account</h4>
+        <form method="post" novalidate>
+          {{ form.hidden_tag() }}
+          <div class="mb-3">
+            {{ form.username.label(class="form-label") }}
+            {{ form.username(class="form-control", autofocus=true) }}
+            {% for e in form.username.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="mb-3">
+            {{ form.email.label(class="form-label") }}
+            {{ form.email(class="form-control") }}
+            {% for e in form.email.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="mb-3">
+            {{ form.password.label(class="form-label") }}
+            {{ form.password(class="form-control") }}
+            {% for e in form.password.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="mb-3">
+            {{ form.confirm.label(class="form-label") }}
+            {{ form.confirm(class="form-control") }}
+            {% for e in form.confirm.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+          </div>
+          {{ form.submit(class="btn btn-info w-100") }}
+        </form>
+        <p class="text-center text-secondary small mt-3 mb-0">
+          Already registered? <a href="{{ url_for('auth.login') }}">Sign in</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

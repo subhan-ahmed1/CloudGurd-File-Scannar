@@ -1,0 +1,26 @@
+# --- Web framework ---
+Flask==3.0.3
+Flask-SQLAlchemy==3.1.1
+Flask-Login==0.6.3
+Flask-WTF==1.2.1
+Flask-Migrate==4.0.7
+WTForms==3.1.2
+email-validator==2.1.1
+
+# --- Database drivers ---
+psycopg2-binary==2.9.9        # PostgreSQL (AWS RDS)
+PyMySQL==1.1.1                # MySQL alternative
+
+# --- Cloud storage ---
+boto3==1.34.122               # AWS S3
+
+# --- Scanner engine ---
+requests==2.32.3              # VirusTotal API
+python-magic==0.4.27          # libmagic file-type detection (needs libmagic1)
+clamd==1.0.2                  # ClamAV daemon client
+
+# --- Production server ---
+gunicorn==22.0.0
+
+# --- Environment ---
+python-dotenv==1.0.1

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% from "_macros.html" import verdict_badge, risk_bar %}
+{% block title %}Scan history &middot; {{ app_name }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0">Scan history</h3>
+  <div class="btn-group btn-group-sm">
+    <a class="btn btn-outline-light {{ 'active' if not active_verdict }}" href="{{ url_for('main.history') }}">All</a>
+    <a class="btn btn-outline-success {{ 'active' if active_verdict == 'safe' }}" href="{{ url_for('main.history', verdict='safe') }}">Safe</a>
+    <a class="btn btn-outline-warning {{ 'active' if active_verdict == 'suspicious' }}" href="{{ url_for('main.history', verdict='suspicious') }}">Suspicious</a>
+    <a class="btn btn-outline-danger {{ 'active' if active_verdict == 'malicious' }}" href="{{ url_for('main.history', verdict='malicious') }}">Malicious</a>
+  </div>
+</div>
+
+<div class="card border-secondary-subtle">
+  <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead><tr><th>File</th><th>Verdict</th><th>Risk</th><th>SHA-256</th><th>Size</th><th>Date</th><th></th></tr></thead>
+      <tbody>
+      {% for f in files %}
+        <tr>
+          <td class="text-truncate" style="max-width: 220px;" title="{{ f.original_filename }}"><i class="bi bi-file-earmark"></i> {{ f.original_filename }}</td>
+          <td>{{ verdict_badge(f.result.verdict) }}</td>
+          <td style="min-width: 90px;">{{ risk_bar(f.result.score) }}</td>
+          <td class="font-monospace small text-secondary">{{ f.sha256[:16] }}…</td>
+          <td class="small">{{ '%.1f'|format(f.size_bytes / 1024) }} KB</td>
+          <td class="small text-secondary">{{ f.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td><a class="btn btn-sm btn-outline-info" href="{{ url_for('main.report', file_id=f.id) }}">Report</a></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="7" class="text-center text-secondary py-5">No scans found.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% if pagination.pages > 1 %}
+<nav class="mt-3">
+  <ul class="pagination pagination-sm justify-content-center">
+    <li class="page-item {{ 'disabled' if not pagination.has_prev }}">
+      <a class="page-link" href="{{ url_for('main.history', page=pagination.prev_num, verdict=active_verdict) }}">Previous</a>
+    </li>
+    {% for p in pagination.iter_pages() %}
+      {% if p %}
+        <li class="page-item {{ 'active' if p == pagination.page }}"><a class="page-link" href="{{ url_for('main.history', page=p, verdict=active_verdict) }}">{{ p }}</a></li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">…</span></li>
+      {% endif %}
+    {% endfor %}
+    <li class="page-item {{ 'disabled' if not pagination.has_next }}">
+      <a class="page-link" href="{{ url_for('main.history', page=pagination.next_num, verdict=active_verdict) }}">Next</a>
+    </li>
+  </ul>
+</nav>
+{% endif %}
+{% endblock %}

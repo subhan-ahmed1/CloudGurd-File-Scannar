@@ -1,0 +1,36 @@
+:root {
+  --brand: #0dcaf0;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(900px 500px at 100% -10%, rgba(13, 202, 240, 0.08), transparent 60%),
+    radial-gradient(700px 500px at -10% 110%, rgba(13, 110, 253, 0.07), transparent 60%),
+    var(--bs-body-bg);
+}
+
+.navbar-brand i { vertical-align: -2px; }
+
+.card {
+  background-color: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(4px);
+}
+
+.border-dashed { border-style: dashed !important; }
+
+.dropzone {
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.dropzone:hover,
+.dropzone.dragover {
+  background-color: rgba(13, 202, 240, 0.08);
+  border-color: var(--brand) !important;
+}
+
+pre code { white-space: pre-wrap; word-break: break-word; }
+
+.font-monospace { font-size: 0.85em; }
+
+.table > :not(caption) > * > * { background-color: transparent; }

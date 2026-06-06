@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% from "_macros.html" import verdict_badge, risk_bar %}
+{% block title %}Dashboard &middot; {{ app_name }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="mb-0">Dashboard</h3>
+  <a class="btn btn-info" href="{{ url_for('main.upload') }}"><i class="bi bi-cloud-arrow-up"></i> Upload &amp; Scan</a>
+</div>
+
+<div class="row g-3 mb-4">
+  {% set cards = [
+    ('Total scans', stats.total, 'bi-files', 'text-info'),
+    ('Safe', stats.safe, 'bi-check-circle', 'text-success'),
+    ('Suspicious', stats.suspicious, 'bi-exclamation-triangle', 'text-warning'),
+    ('Malicious', stats.malicious, 'bi-x-octagon', 'text-danger'),
+  ] %}
+  {% for label, value, icon, color in cards %}
+  <div class="col-6 col-lg-3">
+    <div class="card border-secondary-subtle h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <div class="text-secondary small">{{ label }}</div>
+            <div class="fs-3 fw-bold">{{ value }}</div>
+          </div>
+          <i class="bi {{ icon }} fs-3 {{ color }}"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="card border-secondary-subtle h-100">
+      <div class="card-body">
+        <h6 class="card-title">Verdict breakdown</h6>
+        {% if stats.total %}
+          <canvas id="verdictChart" height="220"></canvas>
+        {% else %}
+          <p class="text-secondary small mb-0">No scans yet. Upload a file to get started.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card border-secondary-subtle h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <h6 class="card-title mb-0">Recent scans</h6>
+          <a class="small" href="{{ url_for('main.history') }}">View all</a>
+        </div>
+        <div class="table-responsive mt-3">
+          <table class="table table-sm align-middle mb-0">
+            <thead><tr><th>File</th><th>Verdict</th><th>Risk</th><th>Date</th><th></th></tr></thead>
+            <tbody>
+            {% for f in files %}
+              <tr>
+                <td class="text-truncate" style="max-width: 200px;" title="{{ f.original_filename }}">
+                  <i class="bi bi-file-earmark"></i> {{ f.original_filename }}
+                </td>
+                <td>{{ verdict_badge(f.result.verdict) }}</td>
+                <td style="min-width: 90px;">{{ risk_bar(f.result.score) }}</td>
+                <td class="small text-secondary">{{ f.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td><a class="btn btn-sm btn-outline-info" href="{{ url_for('main.report', file_id=f.id) }}">Report</a></td>
+              </tr>
+            {% else %}
+              <tr><td colspan="5" class="text-secondary text-center py-4">No scans yet.</td></tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if stats.total %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  new Chart(document.getElementById('verdictChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Safe', 'Suspicious', 'Malicious'],
+      datasets: [{
+        data: [{{ stats.safe }}, {{ stats.suspicious }}, {{ stats.malicious }}],
+        backgroundColor: ['#198754', '#ffc107', '#dc3545'],
+        borderWidth: 0
+      }]
+    },
+    options: { plugins: { legend: { position: 'bottom', labels: { color: '#adb5bd' } } } }
+  });
+</script>
+{% endif %}
+{% endblock %}

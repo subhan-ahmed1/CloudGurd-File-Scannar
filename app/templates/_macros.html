@@ -1,0 +1,18 @@
+{% macro verdict_badge(verdict) %}
+  {% if verdict == 'malicious' %}
+    <span class="badge text-bg-danger"><i class="bi bi-x-octagon"></i> Malicious</span>
+  {% elif verdict == 'suspicious' %}
+    <span class="badge text-bg-warning"><i class="bi bi-exclamation-triangle"></i> Suspicious</span>
+  {% elif verdict == 'safe' %}
+    <span class="badge text-bg-success"><i class="bi bi-check-circle"></i> Safe</span>
+  {% else %}
+    <span class="badge text-bg-secondary"><i class="bi bi-question-circle"></i> {{ verdict|capitalize }}</span>
+  {% endif %}
+{% endmacro %}
+
+{% macro risk_bar(score) %}
+  {% set cls = 'bg-success' if score < 34 else ('bg-warning' if score < 67 else 'bg-danger') %}
+  <div class="progress" role="progressbar" style="height: 8px;">
+    <div class="progress-bar {{ cls }}" style="width: {{ score }}%"></div>
+  </div>
+{% endmacro %}

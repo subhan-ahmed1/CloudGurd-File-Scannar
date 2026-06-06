@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row align-items-center py-5">
+  <div class="col-lg-6">
+    <h1 class="display-5 fw-bold">Scan files for threats in the cloud.</h1>
+    <p class="lead text-secondary">
+      Upload a file and get an automated security report: cryptographic
+      integrity hashes, file-type validation, suspicious-extension detection,
+      and malware analysis powered by ClamAV and the VirusTotal API.
+    </p>
+    <div class="d-flex gap-2 mt-4">
+      <a class="btn btn-info btn-lg" href="{{ url_for('auth.register') }}"><i class="bi bi-rocket-takeoff"></i> Get started</a>
+      <a class="btn btn-outline-light btn-lg" href="{{ url_for('auth.login') }}">Sign in</a>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="row g-3 mt-4 mt-lg-0">
+      {% set feats = [
+        ('bi-fingerprint', 'Integrity hashes', 'MD5 &amp; SHA-256 generated for every file.'),
+        ('bi-file-earmark-binary', 'Type validation', 'Magic-byte sniffing catches disguised executables.'),
+        ('bi-bug', 'Malware detection', 'ClamAV signatures + VirusTotal multi-engine verdict.'),
+        ('bi-cloud-check', 'Cloud native', 'S3 storage, RDS database, EC2 deployment.'),
+      ] %}
+      {% for icon, title, desc in feats %}
+      <div class="col-6">
+        <div class="card h-100 border-secondary-subtle">
+          <div class="card-body">
+            <i class="bi {{ icon }} fs-3 text-info"></i>
+            <h6 class="mt-2 mb-1">{{ title }}</h6>
+            <p class="small text-secondary mb-0">{{ desc | safe }}</p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
